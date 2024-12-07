@@ -6,35 +6,51 @@
 To setup a watch page you first have to create a new class that inherits `WatchPage` bellow is an example of a page using Banana OS which has two buttons that you can click
 ```cs
 using System.Text;
+using BananaOS;
+using BananaOS.Pages;
 using UnityEngine;
 
-namespace BananaOS.Pages
+namespace YourProjectsNamespace
 {
-    public class ExamplePage : WatchPage
+    public class Page : WatchPage
     {
-        //What will be shown on the main menu if DisplayOnMainMenu is set to true
-        public override string Title => "Example";
+        // Constants to avoid magic strings and to make the code more maintainable
+        private const string PageTitle = "Example";
+        private const string NotificationMessage = "<align=center><size=5>Notification</size></align>";
 
-        //Enabling will display your page on the main menu if you're nesting pages you should set this to false
+        // Default colors for the notification
+        private readonly Color notificationColor = Color.blue;
+        private readonly Color textColor = Color.white;
+
+        // Main Menu Display Control
         public override bool DisplayOnMainMenu => true;
 
-        //This method will be ran after the watch is completely setup
+        // What will be shown on the main menu if DisplayOnMainMenu is set to true
+        public override string Title => PageTitle;
+
+        // This method is called after the watch is completely setup
         public override void OnPostModSetup()
         {
-            //max selection index so the indicator stays on the screen
+            // Set max index for the selection so the indicator stays on the screen
             selectionHandler.maxIndex = 1;
         }
 
-        //What you return is what is drawn to the watch screen the screen will be updated everytime you press a button
+        // This method returns the content to be displayed on the watch screen
         public override string OnGetScreenContent()
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("<color=yellow>==</color> Example <color=yellow>==</color>");
-            stringBuilder.AppendLine(selectionHandler.GetOriginalBananaOSSelectionText(0, "Test Button"));
-            stringBuilder.AppendLine(selectionHandler.GetOriginalBananaOSSelectionText(1, "Test Button 2"));
+
+            // Adding colorized page title
+            stringBuilder.AppendLine($"<color=yellow>==</color> {PageTitle} <color=yellow>==</color>");
+
+            // Adding button options with selection indicators
+            stringBuilder.AppendLine(selectionHandler.GetOriginalBananaOSSelectionText(0, "ButtonLabel1"));
+            stringBuilder.AppendLine(selectionHandler.GetOriginalBananaOSSelectionText(1, "ButtonLabel2"));
+
             return stringBuilder.ToString();
         }
 
+        // This method handles button press events
         public override void OnButtonPressed(WatchButtonType buttonType)
         {
             switch (buttonType)
@@ -48,19 +64,48 @@ namespace BananaOS.Pages
                     break;
 
                 case WatchButtonType.Enter:
-                    if (selectionHandler.currentIndex == 0)
-                    {
-                        Debug.Log("Test Button Press");
-                        return;
-                    }
-                    Debug.Log("Test Button Press 2");
+                    HandleEnterButtonPress();
                     break;
 
-                //It is recommended that you keep this unless you're nesting pages if so you should use the SwitchToPage method
                 case WatchButtonType.Back:
                     ReturnToMainMenu();
                     break;
             }
+        }
+
+        // This method handles the Enter button press logic
+        private void HandleEnterButtonPress()
+        {
+            switch (selectionHandler.currentIndex)
+            {
+                case 0:
+                    // Add logic for the first button (Test Button)
+                    HandleTestButtonAction();
+                    break;
+
+                case 1:
+                    // Add logic for the second button (Test Button 2)
+                    HandleTestButton2Action();
+                    break;
+
+                default:
+                    // Add fallback logic or notification if needed
+                    break;
+            }
+        }
+
+        // Example action for Test Button 1
+        private void HandleTestButtonAction()
+        {
+            // This can trigger a notification or some logic
+            BananaNotifications.DisplayNotification($"{NotificationMessage} Button 1 clicked!", notificationColor, textColor, .8f);
+        }
+
+        // Example action for Test Button 2
+        private void HandleTestButton2Action()
+        {
+            // This can trigger a different notification or logic
+            BananaNotifications.DisplayNotification($"{NotificationMessage} Button 2 clicked!", notificationColor, textColor, .8f);
         }
     }
 }

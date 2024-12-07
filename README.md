@@ -40,7 +40,7 @@ namespace CodysModTemplate
         {
             var stringBuilder = new StringBuilder();
 
-            // Adding colorized page title
+            // This here add the page title
             stringBuilder.AppendLine($"<color=yellow>==</color> {PageTitle} <color=yellow>==</color>");
 
             // Adding button options with selection indicators
